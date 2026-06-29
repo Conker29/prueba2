@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'firebase_options.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'config/supabase_config.dart';
 import 'core/theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/usuario_provider.dart';
@@ -14,9 +14,12 @@ import 'ui/home_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+
+  await Supabase.initialize(
+    url: SUPABASE_URL,
+    anonKey: SUPABASE_ANON_KEY,
   );
+
   runApp(const MyApp());
 }
 

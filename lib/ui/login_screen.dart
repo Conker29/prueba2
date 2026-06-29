@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/sector_provider.dart';
 import '../core/constants.dart';
-import '../widgets/estado_widgets.dart' show mostrarSnack;
+import 'widgets/estado_widgets.dart' show mostrarSnack;
 import 'recuperar_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {

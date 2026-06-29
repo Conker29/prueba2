@@ -1,5 +1,3 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 import '../models/index.dart';
 import 'supabase_service.dart';
 
@@ -7,112 +5,134 @@ class UserService {
   final SupabaseService _supabaseService = SupabaseService();
 
   // Crear usuario
-  Future<void> createUser(User user) async {
-    await _supabaseService.usersTable.insert(user.toMap());
+  Future<void> createUser(UsuarioModel usuario) async {
+    await _supabaseService.usersTable.insert(_toSupabaseMap(usuario));
   }
 
   // Obtener usuario por ID
-  Future<User?> getUserById(String id) async {
-    final response = await _supabaseService.usersTable
-        .select()
-        .eq('id', id)
-        .single();
-    return User.fromMap(response);
+  Future<UsuarioModel?> getUserById(String id) async {
+    try {
+      final response = await _supabaseService.usersTable
+          .select()
+          .eq('id', id)
+          .single();
+      return _fromSupabaseMap(response);
+    } catch (e) {
+      return null;
+    }
   }
 
   // Obtener usuario por email
-  Future<User?> getUserByEmail(String email) async {
+  Future<UsuarioModel?> getUserByEmail(String email) async {
     try {
       final response = await _supabaseService.usersTable
           .select()
           .eq('email', email)
           .single();
-      return User.fromMap(response);
+      return _fromSupabaseMap(response);
     } catch (e) {
       return null;
     }
   }
 
   // Actualizar usuario
-  Future<void> updateUser(User user) async {
+  Future<void> updateUser(UsuarioModel usuario) async {
     await _supabaseService.usersTable
-        .update(user.toMap())
-        .eq('id', user.id);
+        .update(_toSupabaseMap(usuario))
+        .eq('id', usuario.uid);
   }
 
   // Obtener todos los coordinadores de brigada
-  Future<List<User>> getBrigadeCoordinators() async {
+  Future<List<UsuarioModel>> getBrigadeCoordinators() async {
     final response = await _supabaseService.usersTable
         .select()
-        .eq('role', 'brigade_coordinator')
+        .eq('role', 'coordinador_brigada')
         .eq('is_active', true);
-    return (response as List).map((e) => User.fromMap(e)).toList();
+    return (response as List).map((e) => _fromSupabaseMap(e)).toList();
   }
 
   // Obtener coordinadores de brigada por sector
-  Future<List<User>> getBrigadeCoordinatorsBySector(String sectorId) async {
+  Future<List<UsuarioModel>> getBrigadeCoordinatorsBySector(
+      String sectorId) async {
     final response = await _supabaseService.usersTable
         .select()
-        .eq('role', 'brigade_coordinator')
+        .eq('role', 'coordinador_brigada')
         .eq('sector_id', sectorId)
         .eq('is_active', true);
-    return (response as List).map((e) => User.fromMap(e)).toList();
+    return (response as List).map((e) => _fromSupabaseMap(e)).toList();
   }
 
   // Obtener vacunadores por coordinador de brigada
-  Future<List<User>> getVaccinatorsByBrigadeCoordinator(
+  Future<List<UsuarioModel>> getVaccinatorsByBrigadeCoordinator(
       String brigadeCoordinatorId) async {
-    // Primero obtener los coordinadores de brigada con sus sectores asignados
     final brigadeResponse = await _supabaseService.brigadesTable
         .select('sector_id')
         .eq('brigade_coordinator_id', brigadeCoordinatorId);
 
-    List<String> sectorIds = [];
-    for (var brigade in brigadeResponse as List) {
-      sectorIds.add(brigade['sector_id']);
-    }
-
-    if (sectorIds.isEmpty) {
-      return [];
-    }
-
-    // Luego obtener los vacunadores en esos sectores
-    final response = await _supabaseService.usersTable.select();
-    final users = (response as List).map((e) => User.fromMap(e)).toList();
-
-    return users
-        .where((user) =>
-            user.role == UserRole.vaccinator &&
-            user.sectorId != null &&
-            sectorIds.contains(user.sectorId))
+    final sectorIds = (brigadeResponse as List)
+        .map<String>((b) => b['sector_id'] as String)
         .toList();
+
+    if (sectorIds.isEmpty) return [];
+
+    final response = await _supabaseService.usersTable
+        .select()
+        .eq('role', 'vacunador')
+        .inFilter('sector_id', sectorIds)
+        .eq('is_active', true);
+
+    return (response as List).map((e) => _fromSupabaseMap(e)).toList();
   }
 
   // Obtener vacunadores por sector
-  Future<List<User>> getVaccinatorsBySector(String sectorId) async {
+  Future<List<UsuarioModel>> getVaccinatorsBySector(String sectorId) async {
     final response = await _supabaseService.usersTable
         .select()
-        .eq('role', 'vaccinator')
+        .eq('role', 'vacunador')
         .eq('sector_id', sectorId)
         .eq('is_active', true);
-    return (response as List).map((e) => User.fromMap(e)).toList();
+    return (response as List).map((e) => _fromSupabaseMap(e)).toList();
   }
 
-  // Cambiar estado de contraseña
+  // Marcar contraseña como cambiada
   Future<void> markPasswordAsChanged(String userId) async {
     await _supabaseService.usersTable
-        .update({'password_changed': true})
-        .eq('id', userId);
+        .update({'debe_cambiar_password': false}).eq('id', userId);
   }
 
   // Desactivar usuario
   Future<void> deactivateUser(String userId) async {
     await _supabaseService.usersTable
-        .update({'is_active': false})
-        .eq('id', userId);
+        .update({'is_active': false}).eq('id', userId);
   }
-}
 
-extension on User {
-  toMap() {}
+  // ── Mapeo entre UsuarioModel (Firebase/local) y esquema Supabase ──
+
+  Map<String, dynamic> _toSupabaseMap(UsuarioModel u) => {
+        'id': u.uid,
+        'cedula': u.cedula,
+        'nombres': u.nombres,
+        'apellidos': u.apellidos,
+        'telefono': u.telefono,
+        'email': u.correo,
+        'role': u.rol,
+        'sectores_asignados': u.sectoresAsignados,
+        'debe_cambiar_password': u.debeCambiarPassword,
+        'creado_por': u.creadoPor,
+        'is_active': true,
+      };
+
+  UsuarioModel _fromSupabaseMap(Map<String, dynamic> map) => UsuarioModel(
+        uid: map['id'] ?? '',
+        cedula: map['cedula'] ?? '',
+        nombres: map['nombres'] ?? '',
+        apellidos: map['apellidos'] ?? '',
+        telefono: map['telefono'] ?? '',
+        correo: map['email'] ?? '',
+        rol: map['role'] ?? '',
+        sectoresAsignados:
+            List<String>.from(map['sectores_asignados'] ?? []),
+        debeCambiarPassword: map['debe_cambiar_password'] ?? true,
+        creadoPor: map['creado_por'],
+      );
 }

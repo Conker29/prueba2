@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import '../data/usuario_service.dart';
 import '../models/usuario_model.dart';
-
 
 enum EstadoUI { inicial, cargando, exito, error }
 
@@ -16,16 +14,8 @@ class UsuarioProvider extends ChangeNotifier {
     estado = EstadoUI.cargando;
     notifyListeners();
 
-    FirebaseApp? secondary;
     try {
-      // App secundaria para no perder la sesión del coordinador
-      secondary = await Firebase.initializeApp(
-        name: 'SecondaryApp-${DateTime.now().millisecondsSinceEpoch}',
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-
-      await _service.crearUsuario(secondaryApp: secondary, usuario: usuario);
-
+      await _service.crearUsuario(usuario: usuario, secondaryApp: null);
       estado = EstadoUI.exito;
       notifyListeners();
       return true;
@@ -34,8 +24,6 @@ class UsuarioProvider extends ChangeNotifier {
       estado = EstadoUI.error;
       notifyListeners();
       return false;
-    } finally {
-      await secondary?.delete();
     }
   }
 
@@ -47,8 +35,4 @@ class UsuarioProvider extends ChangeNotifier {
 
   Future<void> asignarSectores(String uid, List<String> sectores) =>
       _service.asignarSectores(uid, sectores);
-}
-
-class DefaultFirebaseOptions {
-  static FirebaseOptions? get currentPlatform => null;
 }

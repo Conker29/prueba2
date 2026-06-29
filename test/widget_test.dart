@@ -1,30 +1,57 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
-import 'package:prueba2/main.dart';
+import 'package:vacunacion_app/providers/auth_provider.dart';
+import 'package:vacunacion_app/providers/sector_provider.dart';
+import 'package:vacunacion_app/ui/login_screen.dart';
+import 'package:vacunacion_app/core/theme.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('LoginScreen muestra campos de correo y contraseña',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => SectorProvider()),
+        ],
+        child: MaterialApp(
+          theme: appTheme,
+          home: const LoginScreen(),
+        ),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Vacunación Municipal'), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, 'Correo'), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, 'Contraseña'), findsOneWidget);
+    expect(find.text('Ingresar'), findsOneWidget);
+    expect(find.text('¿Olvidó su contraseña?'), findsOneWidget);
+  });
+
+  testWidgets('LoginScreen valida campos vacíos al intentar ingresar',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => SectorProvider()),
+        ],
+        child: MaterialApp(
+          theme: appTheme,
+          home: const LoginScreen(),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.tap(find.text('Ingresar'));
+    await tester.pump();
+
+    expect(find.text('Ingrese el correo'), findsOneWidget);
+    expect(find.text('Ingrese la contraseña'), findsOneWidget);
   });
 }
