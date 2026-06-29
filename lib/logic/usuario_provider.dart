@@ -48,3 +48,6 @@ class UsuarioProvider extends ChangeNotifier {
   Future<void> asignarSectores(String uid, List<String> sectores) =>
       _service.asignarSectores(uid, sectores);
 }
+
+class DefaultFirebaseOptions {
+}
