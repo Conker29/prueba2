@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import '../../logic/auth_provider.dart';
-import '../../logic/vacunacion_provider.dart';
-import '../../logic/sync_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/vacunacion_provider.dart';
+import '../../providers/sync_provider.dart';
 import '../../models/vacunacion_model.dart';
 import '../widgets/estado_widgets.dart';
 

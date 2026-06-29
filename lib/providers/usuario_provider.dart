@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../data/usuario_service.dart';
 import '../models/usuario_model.dart';
-import '../firebase_options.dart';
+
 
 enum EstadoUI { inicial, cargando, exito, error }
 
@@ -50,4 +50,5 @@ class UsuarioProvider extends ChangeNotifier {
 }
 
 class DefaultFirebaseOptions {
+  static FirebaseOptions? get currentPlatform => null;
 }

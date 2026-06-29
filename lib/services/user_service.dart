@@ -1,3 +1,5 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../models/index.dart';
 import 'supabase_service.dart';
 
@@ -109,4 +111,8 @@ class UserService {
         .update({'is_active': false})
         .eq('id', userId);
   }
+}
+
+extension on User {
+  toMap() {}
 }

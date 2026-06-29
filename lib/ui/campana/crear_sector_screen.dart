@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../logic/sector_provider.dart';
+import '../../providers/sector_provider.dart';
 import '../../models/sector_model.dart';
 import '../widgets/estado_widgets.dart';
 

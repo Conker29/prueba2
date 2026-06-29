@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../logic/auth_provider.dart';
-import '../../logic/vacunacion_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/vacunacion_provider.dart';
 import '../../models/vacunacion_model.dart';
 import '../widgets/estado_widgets.dart';
 import 'crear_sector_screen.dart';

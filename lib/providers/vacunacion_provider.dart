@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../data/vacunacion_service.dart';
-import '../data/storage_service.dart';
-import '../data/local_db.dart';
+import '../services/storage_service.dart';
+import '../services/local_db.dart';
 import '../models/vacunacion_model.dart';
 
 class VacunacionProvider extends ChangeNotifier {

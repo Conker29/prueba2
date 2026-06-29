@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-import '../data/sector_service.dart';
+import '../services/sector_service.dart';
 import '../models/sector_model.dart';
 
 class SectorProvider extends ChangeNotifier {

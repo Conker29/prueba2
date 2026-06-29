@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../logic/auth_provider.dart';
-import '../../logic/sync_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/sync_provider.dart';
 import 'registro_vacunacion_screen.dart';
 import 'lista_vacunaciones_screen.dart';
 

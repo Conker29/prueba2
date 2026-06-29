@@ -1,46 +1,39 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../models/index.dart';
-import 'supabase_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/usuario_model.dart';
+import '../core/constants.dart';
 
 class AuthService {
-  final SupabaseService _supabaseService = SupabaseService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Future<void> signUp({
-    required String email,
-    required String password,
-  }) async {
-    await _supabaseService.auth.signUp(
-      email: email,
+  User? get currentUser => _auth.currentUser;
+
+  Future<UsuarioModel?> login(String correo, String password) async {
+    final cred = await _auth.signInWithEmailAndPassword(
+      email: correo,
       password: password,
     );
+    return await obtenerUsuario(cred.user!.uid);
   }
 
-  Future<AuthResponse> signIn({
-    required String email,
-    required String password,
-  }) async {
-    return await _supabaseService.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
+  Future<UsuarioModel?> obtenerUsuario(String uid) async {
+    final doc = await _db.collection(FirestoreCollections.usuarios).doc(uid).get();
+    if (doc.exists) return UsuarioModel.fromMap(doc.data()!);
+    return null;
   }
 
-  Future<void> signOut() async {
-    await _supabaseService.auth.signOut();
+  Future<void> cambiarPassword(String nuevaPassword) async {
+    await _auth.currentUser!.updatePassword(nuevaPassword);
+    await _db
+        .collection(FirestoreCollections.usuarios)
+        .doc(_auth.currentUser!.uid)
+        .update({'debeCambiarPassword': false});
   }
 
-  Future<void> changePassword({
-    required String newPassword,
-  }) async {
-    await _supabaseService.auth.updateUser(
-      UserAttributes(password: newPassword),
-    );
+  Future<void> recuperarPassword(String correo) async {
+    await _auth.sendPasswordResetEmail(email: correo);
   }
 
-  Future<void> resetPasswordForEmail(String email) async {
-    await _supabaseService.auth.resetPasswordForEmail(email);
-  }
-
-  bool get isAuthenticated => _supabaseService.isAuthenticated;
-  User? get currentUser => _supabaseService.currentUser;
+  Future<void> logout() async => _auth.signOut();
 }

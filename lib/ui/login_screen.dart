@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../logic/auth_provider.dart';
-import '../logic/sector_provider.dart';
+import '../providers/auth_provider.dart';
+import '../providers/sector_provider.dart';
 import '../core/constants.dart';
 import '../widgets/estado_widgets.dart' show mostrarSnack;
 import 'recuperar_password_screen.dart';

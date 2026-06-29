@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../data/local_db.dart';
+import '../services/local_db.dart';
 import '../data/vacunacion_service.dart';
-import '../data/storage_service.dart';
+import '../services/storage_service.dart';
 
 class SyncProvider extends ChangeNotifier {
   final LocalDB _local = LocalDB.instance;

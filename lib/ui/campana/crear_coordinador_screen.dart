@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../logic/auth_provider.dart';
-import '../../logic/usuario_provider.dart';
-import '../../logic/sector_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/usuario_provider.dart';
+import '../../providers/sector_provider.dart';
 import '../../models/usuario_model.dart';
 import '../../models/sector_model.dart';
 import '../../core/constants.dart';

@@ -4,11 +4,11 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 import 'core/theme.dart';
-import 'logic/auth_provider.dart';
-import 'logic/usuario_provider.dart';
-import 'logic/sector_provider.dart';
-import 'logic/vacunacion_provider.dart';
-import 'logic/sync_provider.dart';
+import 'providers/auth_provider.dart';
+import 'providers/usuario_provider.dart';
+import 'providers/sector_provider.dart';
+import 'providers/vacunacion_provider.dart';
+import 'providers/sync_provider.dart';
 import 'ui/login_screen.dart';
 import 'ui/home_router.dart';
 
